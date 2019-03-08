@@ -47,34 +47,51 @@ void BVHAccel::drawOutline(BVHNode *node, const Color& c, float alpha) const {
 
 BVHNode *BVHAccel::construct_bvh(const std::vector<Primitive*>& prims, size_t max_leaf_size) {
   
-  // TODO (Part 2.1):
+  // (Part 2.1):
   // Construct a BVH from the given vector of primitives and maximum leaf
   // size configuration. The starter code build a BVH aggregate with a
   // single leaf node (which is also the root) that encloses all the
   // primitives.
 
-  BBox centroid_box, bbox;
-
+  BBox bbox;
   for (Primitive *p : prims) {
       BBox bb = p->get_bbox();
       bbox.expand(bb);
-      Vector3D c = bb.centroid();
-      centroid_box.expand(c);
   }
 
-  BVHNode *node = new BVHNode(bbox);
-
-
+  auto *node = new BVHNode(bbox);
   node->prims = new vector<Primitive *>(prims);
+
+  if (prims.size() > max_leaf_size) {
+    // compute the axis with largest extent
+    int idx = bbox.extent[0] < bbox.extent[1] ? 1 : 0;
+    idx = bbox.extent[idx] < bbox.extent[2] ? 2 : idx;
+
+    double split = 0;
+    for (Primitive *p : prims)
+      split += p->get_bbox().centroid()[idx];
+    split /= prims.size();
+
+    auto *left = new vector<Primitive *>(), *right = new vector<Primitive *>();
+    for (Primitive *p : prims)
+      (p->get_bbox().centroid()[idx] <= split ? left : right)->push_back(p);
+
+    if (left->empty() || right->empty())
+      // this only happens if all centroid are the same
+      // and thus no point to split anymore
+      return node;
+
+    node->l = construct_bvh(*left, max_leaf_size);
+    node->r = construct_bvh(*right, max_leaf_size);
+  }
+
   return node;
-
-
 }
 
 
 bool BVHAccel::intersect(const Ray& ray, BVHNode *node) const {
 
-  // TODO (Part 2.3):
+  // (Part 2.3):
   // Fill in the intersect function.
   // Take note that this function has a short-circuit that the
   // Intersection version cannot, since it returns as soon as it finds
@@ -91,21 +108,37 @@ bool BVHAccel::intersect(const Ray& ray, BVHNode *node) const {
 
 }
 
-bool BVHAccel::intersect(const Ray& ray, Intersection* i, BVHNode *node) const {
+bool BVHAccel::intersect(const Ray& r, Intersection* i, BVHNode *node) const {
 
-  // TODO (Part 2.3):
+  // (Part 2.3):
   // Fill in the intersect function.
 
+  double t1, t2;
+  if (node->bb.intersect(r, t1, t2)) {
 
-  bool hit = false;
-  for (Primitive *p : *(root->prims)) {
-    total_isects++;
-    if (p->intersect(ray, i)) 
-      hit = true;
-  }
-  return hit;
+    bool hit = false;
 
-  
+    if (node->isLeaf()) {
+
+      for (Primitive *p : *(node->prims)) {
+        total_isects++;
+        if (p->intersect(r, i))
+          hit = true;
+      }
+
+      return hit;
+
+    } else {
+      // intersection will be automatically set by recursion
+      if (intersect(r, i, node->l))
+        hit = true;
+      if (intersect(r, i, node->r))
+        hit = true;
+      return hit;
+    }
+
+  } else
+    return false;
 }
 
 }  // namespace StaticScene

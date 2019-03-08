@@ -2,3 +2,4 @@
 build
 exr
 .idea
+cmake-build-debug
