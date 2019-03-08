@@ -123,7 +123,7 @@ void PathTracer::set_frame_size(size_t width, size_t height) {
   }
   sampleBuffer.resize(width, height);
   frameBuffer.resize(width, height);
-  cell_tl = Vector2D(0,0); 
+  cell_tl = Vector2D(0,0);
   cell_br = Vector2D(width, height);
   render_cell = false;
   sampleCountBuffer.resize(width * height);
@@ -244,7 +244,7 @@ void PathTracer::start_raytracing() {
     // populate the tile work queue
     for (size_t y = cell_tl.y; y < cell_br.y; y += imTS) {
       for (size_t x = cell_tl.x; x < cell_br.x; x += imTS) {
-        workQueue.put_work(WorkItem(x, y, 
+        workQueue.put_work(WorkItem(x, y,
           min(imTS, (int)(cell_br.x-x)), min(imTS, (int)(cell_br.y-y)) ));
       }
     }
@@ -293,7 +293,7 @@ void PathTracer::build_accel() {
   fprintf(stdout, "Done! (%.4f sec)\n", timer.duration());
 
   // build BVH //
-  fprintf(stdout, "[PathTracer] Building BVH from %lu primitives... ", primitives.size()); 
+  fprintf(stdout, "[PathTracer] Building BVH from %lu primitives... ", primitives.size());
   fflush(stdout);
   timer.start();
   bvh = new BVHAccel(primitives);
@@ -503,7 +503,7 @@ void PathTracer::key_press(int key) {
 
 Spectrum PathTracer::estimate_direct_lighting_hemisphere(const Ray& r, const Intersection& isect) {
   // Estimate the lighting from this intersection coming directly from a light.
-  // For this function, sample uniformly in a hemisphere. 
+  // For this function, sample uniformly in a hemisphere.
 
   // make a coordinate system for a hit point
   // with N aligned with the Z direction.
@@ -516,15 +516,15 @@ Spectrum PathTracer::estimate_direct_lighting_hemisphere(const Ray& r, const Int
   const Vector3D& hit_p = r.o + r.d * isect.t;
   const Vector3D& w_out = w2o * (-r.d);
 
-  // This is the same number of total samples as estimate_direct_lighting_importance (outside of delta lights). 
+  // This is the same number of total samples as estimate_direct_lighting_importance (outside of delta lights).
   // We keep the same number of samples for clarity of comparison.
   int num_samples = scene->lights.size() * ns_area_light;
   Spectrum L_out;
 
-  // TODO (Part 3.2): 
+  // TODO (Part 3.2):
   // Write your sampling loop here
   // COMMENT OUT `normal_shading` IN `est_radiance_global_illumination` BEFORE YOU BEGIN
-  
+
 
   return L_out;
 
@@ -533,7 +533,7 @@ Spectrum PathTracer::estimate_direct_lighting_hemisphere(const Ray& r, const Int
 
 Spectrum PathTracer::estimate_direct_lighting_importance(const Ray& r, const Intersection& isect) {
   // Estimate the lighting from this intersection coming directly from a light.
-  // To implement importance sampling, sample only from lights, not uniformly in a hemisphere. 
+  // To implement importance sampling, sample only from lights, not uniformly in a hemisphere.
 
   // make a coordinate system for a hit point
   // with N aligned with the Z direction.
@@ -547,7 +547,7 @@ Spectrum PathTracer::estimate_direct_lighting_importance(const Ray& r, const Int
   const Vector3D& w_out = w2o * (-r.d);
   Spectrum L_out;
 
-  // TODO (Part 3.2): 
+  // TODO (Part 3.2):
   // Here is where your code for looping over scene lights goes
   // COMMENT OUT `normal_shading` IN `est_radiance_global_illumination` BEFORE YOU BEGIN
 
@@ -562,23 +562,23 @@ Spectrum PathTracer::zero_bounce_radiance(const Ray&r, const Intersection& isect
   // TODO (Part 4.2):
   // Returns the light that results from no bounces of light
 
-  
+
   return Spectrum();
 
 
 }
 
 Spectrum PathTracer::one_bounce_radiance(const Ray&r, const Intersection& isect) {
-  
+
   // TODO (Part 4.2):
   // Returns either the direct illumination by hemisphere or importance sampling
   // depending on `direct_hemisphere_sample`
   // (you implemented these functions in Part 3)
 
-  
+
   return Spectrum();
 
-  
+
 }
 
 Spectrum PathTracer::at_least_one_bounce_radiance(const Ray&r, const Intersection& isect) {
@@ -591,13 +591,13 @@ Spectrum PathTracer::at_least_one_bounce_radiance(const Ray&r, const Intersectio
 
   Spectrum L_out = one_bounce_radiance(r, isect);
 
-  // TODO (Part 4.2): 
+  // TODO (Part 4.2):
   // Here is where your code for sampling the BSDF,
-  // performing Russian roulette step, and returning a recursively 
+  // performing Russian roulette step, and returning a recursively
   // traced ray (when applicable) goes
 
   return L_out;
-  
+
 
 }
 
@@ -605,14 +605,14 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
   Intersection isect;
   Spectrum L_out;
 
-  // You will extend this in assignment 3-2. 
+  // You will extend this in assignment 3-2.
   // If no intersection occurs, we simply return black.
   // This changes if you implement hemispherical lighting for extra credit.
 
-  if (!bvh->intersect(r, &isect)) 
+  if (!bvh->intersect(r, &isect))
     return L_out;
 
-  // This line returns a color depending only on the normal vector 
+  // This line returns a color depending only on the normal vector
   // to the surface at the intersection point.
   // REMOVE IT when you are ready to begin Part 3.
 
@@ -620,31 +620,43 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
 
   // TODO (Part 3): Return the direct illumination.
 
-  // TODO (Part 4): Accumulate the "direct" and "indirect" 
+  // TODO (Part 4): Accumulate the "direct" and "indirect"
   // parts of global illumination into L_out rather than just direct
-  
+
   return L_out;
 }
 
 Spectrum PathTracer::raytrace_pixel(size_t x, size_t y) {
 
-  // TODO (Part 1.1):
-  // Make a loop that generates num_samples camera rays and traces them 
-  // through the scene. Return the average Spectrum. 
+  // (Part 1.1):
+  // Make a loop that generates num_samples camera rays and traces them
+  // through the scene. Return the average Spectrum.
   // You should call est_radiance_global_illumination in this function.
 
   // TODO (Part 5):
   // Modify your implementation to include adaptive sampling.
   // Use the command line parameters "samplesPerBatch" and "maxTolerance"
 
-  int num_samples = ns_aa;            // total samples to evaluate
-  Vector2D origin = Vector2D(x,y);    // bottom left corner of the pixel
-
+  int num_samples = (int) ns_aa;            // total samples to evaluate
+  Vector2D origin = Vector2D(x, y);         // bottom left corner of the pixel
 
   sampleCountBuffer[x + y * frameBuffer.w] = num_samples;
-  return Spectrum();
 
-
+  if (num_samples == 1) {
+    Vector2D target = Vector2D(x + 0.5, y + 0.5);
+    target = Vector2D(target.x / sampleBuffer.w, target.y / sampleBuffer.h);
+    Ray r = camera->generate_ray(target.x , target.y);
+    return est_radiance_global_illumination(r);
+  } else {
+    Spectrum spectrum = Spectrum();
+    for (int _ = 0; _ < num_samples; _++) {
+      Vector2D target = origin + gridSampler->get_sample();
+      target = Vector2D(target.x / sampleBuffer.w, target.y / sampleBuffer.h);
+      Ray r = camera->generate_ray(target.x, target.y);
+      spectrum += est_radiance_global_illumination(r);
+    }
+    return spectrum / num_samples;
+  }
 }
 
 void PathTracer::raytrace_tile(int tile_x, int tile_y,
@@ -711,7 +723,7 @@ void PathTracer::worker_thread() {
   WorkItem work;
   while (continueRaytracing && workQueue.try_get_work(&work)) {
     raytrace_tile(work.tile_x, work.tile_y, work.tile_w, work.tile_h);
-    { 
+    {
       lock_guard<std::mutex> lk(m_done);
       ++tilesDone;
       cout << "\r[PathTracer] Rendering... " << int((double)tilesDone/tilesTotal * 100) << '%';
@@ -752,9 +764,9 @@ void PathTracer::save_image(string filename, ImageBuffer* buffer) {
     time_t t = time(nullptr);
     tm *lt = localtime(&t);
     stringstream ss;
-    ss << this->filename << "_screenshot_" << lt->tm_mon+1 << "-" << lt->tm_mday << "_" 
+    ss << this->filename << "_screenshot_" << lt->tm_mon+1 << "-" << lt->tm_mday << "_"
       << lt->tm_hour << "-" << lt->tm_min << "-" << lt->tm_sec << ".png";
-    filename = ss.str();  
+    filename = ss.str();
   }
 
   uint32_t* frame = &buffer->data[0];
@@ -764,7 +776,7 @@ void PathTracer::save_image(string filename, ImageBuffer* buffer) {
   for(size_t i = 0; i < h; ++i) {
     memcpy(frame_out + i * w, frame + (h - i - 1) * w, 4 * w);
   }
-  
+
   for (size_t i = 0; i < w * h; ++i) {
     frame_out[i] |= 0xFF000000;
   }
@@ -772,7 +784,7 @@ void PathTracer::save_image(string filename, ImageBuffer* buffer) {
   fprintf(stderr, "[PathTracer] Saving to file: %s... ", filename.c_str());
   lodepng::encode(filename, (unsigned char*) frame_out, w, h);
   fprintf(stderr, "Done!\n");
-  
+
   delete[] frame_out;
 
   save_sampling_rate_image(filename);
@@ -799,7 +811,7 @@ void PathTracer::save_sampling_rate_image(string filename) {
       }
   }
   uint32_t* frame_out = new uint32_t[w * h];
-  
+
   for (size_t i = 0; i < w * h; ++i) {
     uint32_t out_color_hex = 0;
     frame_out[i] = outputBuffer.data.data()[i];
@@ -807,7 +819,7 @@ void PathTracer::save_sampling_rate_image(string filename) {
   }
 
   lodepng::encode(filename.substr(0,filename.size()-4) + "_rate.png", (unsigned char*) frame_out, w, h);
-  
+
   delete[] frame_out;
 }
 
