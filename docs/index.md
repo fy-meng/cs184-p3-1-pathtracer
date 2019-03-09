@@ -67,22 +67,38 @@ The following table compares the runtime of the  naive primitive list and the VB
 <div align="middle">
     <table width="100%" align="middle">
         <tr>
-            <td><code>
-[PathTracer] Input scene file: ../dae/meshedit/cow.dae <br>
-[PathTracer] Collecting primitives... Done! (0.0008 sec) <br>
-[PathTracer] Building BVH from 5856 primitives... Done! (0.0001 sec) <br>
-[PathTracer] Rendering... 100%! (74.3638s) <br>
-[PathTracer] BVH traced 1872935 rays. <br>
-[PathTracer] Averaged 742.070462 intersection tests per ray. <br>
-            </code></td>
-            <td><code>
-[PathTracer] Input scene file: ../dae/meshedit/cow.dae <br>
-[PathTracer] Collecting primitives... Done! (0.0016 sec) <br>
-[PathTracer] Building BVH from 5856 primitives... Done! (0.0120 sec) <br>
-[PathTracer] Rendering... 100%! (0.8139s) <br>
-[PathTracer] BVH traced 1647410 rays. <br>
-[PathTracer] Averaged 2.970438 intersection tests per ray. <br>
-            </code></td>
+            <td>
+<code>
+[PathTracer] Input scene file: ../dae/meshedit/cow.dae 
+<br>
+[PathTracer] Collecting primitives... Done! (0.0008 sec) 
+<br>
+[PathTracer] Building BVH from 5856 primitives... Done! (0.0001 sec) 
+<br>
+[PathTracer] Rendering... 100%! (74.3638s) 
+<br>
+[PathTracer] BVH traced 1872935 rays. 
+<br>
+[PathTracer] Averaged 742.070462 intersection tests per ray. 
+<br>
+</code>
+            </td>
+            <td>
+<code>
+[PathTracer] Input scene file: ../dae/meshedit/cow.dae 
+<br>
+[PathTracer] Collecting primitives... Done! (0.0016 sec) 
+<br>
+[PathTracer] Building BVH from 5856 primitives... Done! (0.0120 sec) 
+<br>
+[PathTracer] Rendering... 100%! (0.8139s) 
+<br>
+[PathTracer] BVH traced 1647410 rays. 
+<br>
+[PathTracer] Averaged 2.970438 intersection tests per ray. 
+<br>
+</code>
+            </td>
         </tr>
     </table>
 </div>
@@ -101,25 +117,25 @@ In importance light sampling, instead of sampling from the hitting point , we sa
             <td align="middle">
                 <img src="images/p3_bunny_hem_ray_1.png" width="100%"/>
                 <figcaption align="middle">
-                    Uniform hemisphere sampling, 1 light ray per per pixel.
+                    Uniform hemisphere sampling <br> 1 light ray per per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p3_bunny_hem_ray_4.png" width="100%"/>
                 <figcaption align="middle">
-                    Uniform hemisphere sampling, 4 light rays per per pixel.
+                    Uniform hemisphere sampling <br> 4 light rays per per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p3_bunny_hem_ray_16.png" width="100%"/>
                 <figcaption align="middle">
-                    Uniform hemisphere sampling, 16 light rays per per pixel.
+                    Uniform hemisphere sampling <br> 16 light rays per per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p3_bunny_hem_ray_64.png" width="100%"/>
                 <figcaption align="middle">
-                    Uniform hemisphere sampling, 64 light rays per per pixel.
+                    Uniform hemisphere sampling <br> 64 light rays per per pixel.
                 </figcaption>
             </td>
         </tr>
@@ -127,25 +143,25 @@ In importance light sampling, instead of sampling from the hitting point , we sa
             <td align="middle">
                 <img src="images/p3_bunny_light_ray_1.png" width="100%"/>
                 <figcaption align="middle">
-                    Importance light sampling, 1 light ray per per pixel.
+                    Importance light sampling <br> 1 light ray per per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p3_bunny_light_ray_4.png" width="100%"/>
                 <figcaption align="middle">
-                    Importance light sampling, 4 light rays per per pixel.
+                    Importance light sampling <br> 4 light rays per per pixel.
                 </figcaption>
                         </td>
             <td align="middle">
                 <img src="images/p3_bunny_light_ray_16.png" width="100%"/>
                 <figcaption align="middle">
-                    Importance light sampling, 16 light rays per per pixel.
+                    Importance light sampling <br> 16 light rays per per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p3_bunny_light_ray_64.png" width="100%"/>
                 <figcaption align="middle">
-                    Importance light sampling, 64 light rays per per pixel.
+                    Importance light sampling <br> 64 light rays per per pixel.
                 </figcaption>
             </td>           
         </tr>
