@@ -511,24 +511,32 @@ Spectrum PathTracer::estimate_direct_lighting_hemisphere(const Ray& r, const Int
   make_coord_space(o2w, isect.n);
   Matrix3x3 w2o = o2w.T();
 
-  // w_out points towards the source of the ray (e.g.,
+  // wo points towards the source of the ray (e.g.,
   // toward the camera if this is a primary ray)
   const Vector3D& hit_p = r.o + r.d * isect.t;
   const Vector3D& w_out = w2o * (-r.d);
 
   // This is the same number of total samples as estimate_direct_lighting_importance (outside of delta lights).
   // We keep the same number of samples for clarity of comparison.
-  int num_samples = scene->lights.size() * ns_area_light;
+  unsigned long num_samples = scene->lights.size() * ns_area_light;
   Spectrum L_out;
 
-  // TODO (Part 3.2):
+  // (Part 3.2):
   // Write your sampling loop here
   // COMMENT OUT `normal_shading` IN `est_radiance_global_illumination` BEFORE YOU BEGIN
+  for (int _ = 0; _ < num_samples; _++) {
+    Vector3D w_in = hemisphereSampler->get_sample();
+    Vector3D w_in_world = o2w * w_in;
+    Ray ray = Ray(hit_p + EPS_D * w_in_world, w_in_world);
+    Intersection next_isect;
+    if (bvh->intersect(ray, &next_isect))
+      // L_next * f * cos(theta)
+      L_out += next_isect.bsdf->get_emission() * isect.bsdf->f(w_out, w_in) * w_in.z;
+  }
 
+  L_out = L_out * 2 * PI / num_samples;
 
   return L_out;
-
-
 }
 
 Spectrum PathTracer::estimate_direct_lighting_importance(const Ray& r, const Intersection& isect) {
@@ -551,10 +559,30 @@ Spectrum PathTracer::estimate_direct_lighting_importance(const Ray& r, const Int
   // Here is where your code for looping over scene lights goes
   // COMMENT OUT `normal_shading` IN `est_radiance_global_illumination` BEFORE YOU BEGIN
 
+  Vector3D wi;
+  float dist, pdf;
+
+  for (SceneLight *light : scene->lights) {
+    Spectrum L_light;
+    int num_samples = light->is_delta_light() ? 1 : (int) ns_area_light;
+
+    for (int _ = 0; _ < num_samples; _++) {
+      Spectrum l = light->sample_L(hit_p, &wi, &dist, &pdf);
+      Vector3D w_in = w2o * wi;
+      if (w_in.z >= 0) {
+        Vector3D w_in_world = o2w * w_in;
+        Ray ray = Ray(hit_p + EPS_D * wi, w_in_world);
+        ray.max_t = dist;
+        if (!bvh->intersect(ray)) // if nothing blocking
+          // light / light_pdf * f * cos(theta)
+          L_light += l / pdf * isect.bsdf->f(w_out, w_in) * w_in.z;
+      }
+    }
+
+    L_out += L_light / num_samples;
+  }
 
   return L_out;
-
-
 }
 
 Spectrum PathTracer::zero_bounce_radiance(const Ray&r, const Intersection& isect) {
@@ -616,9 +644,12 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
   // to the surface at the intersection point.
   // REMOVE IT when you are ready to begin Part 3.
 
-  return normal_shading(isect.n);
+  // return normal_shading(isect.n);
 
-  // TODO (Part 3): Return the direct illumination.
+  // (Part 3): Return the direct illumination.
+
+  // return estimate_direct_lighting_hemisphere(r, isect);
+  return estimate_direct_lighting_importance(r, isect);
 
   // TODO (Part 4): Accumulate the "direct" and "indirect"
   // parts of global illumination into L_out rather than just direct
