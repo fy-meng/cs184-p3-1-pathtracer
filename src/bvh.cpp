@@ -60,7 +60,6 @@ BVHNode *BVHAccel::construct_bvh(const std::vector<Primitive*>& prims, size_t ma
   }
 
   auto *node = new BVHNode(bbox);
-  node->prims = new vector<Primitive *>(prims);
 
   if (prims.size() > max_leaf_size) {
     // compute the axis with largest extent
@@ -83,13 +82,14 @@ BVHNode *BVHAccel::construct_bvh(const std::vector<Primitive*>& prims, size_t ma
 
     node->l = construct_bvh(*left, max_leaf_size);
     node->r = construct_bvh(*right, max_leaf_size);
-  }
+  } else  // leaf node
+    node->prims = new vector<Primitive *>(prims);
 
   return node;
 }
 
 
-bool BVHAccel::intersect(const Ray& ray, BVHNode *node) const {
+bool BVHAccel::intersect(const Ray& r, BVHNode *node) const {
 
   // (Part 2.3):
   // Fill in the intersect function.
@@ -97,15 +97,18 @@ bool BVHAccel::intersect(const Ray& ray, BVHNode *node) const {
   // Intersection version cannot, since it returns as soon as it finds
   // a hit, it doesn't actually have to find the closest hit.
 
-
-  for (Primitive *p : *(root->prims)) {
-    total_isects++;
-    if (p->intersect(ray)) 
-      return true;
-  }
-  return false;
-
-
+  double t1, t2;
+  if (node->bb.intersect(r, t1, t2)) {
+    if (node->isLeaf()) {
+      for (Primitive *p : *(node->prims))
+        if (p->intersect(r))
+          return true;
+      return false;
+    } else {
+      return intersect(r, node->l) || intersect(r, node->r);
+    }
+  } else
+    return false;
 }
 
 bool BVHAccel::intersect(const Ray& r, Intersection* i, BVHNode *node) const {
@@ -115,19 +118,14 @@ bool BVHAccel::intersect(const Ray& r, Intersection* i, BVHNode *node) const {
 
   double t1, t2;
   if (node->bb.intersect(r, t1, t2)) {
-
     bool hit = false;
-
     if (node->isLeaf()) {
-
       for (Primitive *p : *(node->prims)) {
         total_isects++;
         if (p->intersect(r, i))
           hit = true;
       }
-
       return hit;
-
     } else {
       // intersection will be automatically set by recursion
       if (intersect(r, i, node->l))
@@ -136,7 +134,6 @@ bool BVHAccel::intersect(const Ray& r, Intersection* i, BVHNode *node) const {
         hit = true;
       return hit;
     }
-
   } else
     return false;
 }
