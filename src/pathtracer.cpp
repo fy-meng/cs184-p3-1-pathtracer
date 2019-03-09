@@ -638,7 +638,7 @@ Spectrum PathTracer::at_least_one_bounce_radiance(const Ray&r, const Intersectio
   double rand = random_uniform();
 
   if (bvh->intersect(next_ray, &next_isect)) {
-    if (r.depth == max_ray_depth)
+    if (r.depth == max_ray_depth && max_ray_depth > 1)
       L_out += at_least_one_bounce_radiance(next_ray, next_isect) * f * w_in.z / pdf;
     else if (r.depth > 1 && rand < cpdf)
       L_out += at_least_one_bounce_radiance(next_ray, next_isect) * f * w_in.z / pdf / cpdf;
@@ -662,19 +662,18 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
   // to the surface at the intersection point.
   // REMOVE IT when you are ready to begin Part 3.
 
-   return normal_shading(isect.n);
+  //  return normal_shading(isect.n);
 
   // (Part 3): Return the direct illumination.
 
-  if (max_ray_depth == 0)
-    return zero_bounce_radiance(r, isect);
-  if (max_ray_depth == 1)
-    return one_bounce_radiance(r, isect);
+  L_out = zero_bounce_radiance(r, isect);
+  // else if (max_ray_depth == 1)
+  //   return zero_bounce_radiance(r, isect) + one_bounce_radiance(r, isect);
 
   // (Part 4): Accumulate the "direct" and "indirect"
   // parts of global illumination into L_out rather than just direct
-
-  L_out = zero_bounce_radiance(r, isect) + at_least_one_bounce_radiance(r, isect);
+  if (max_ray_depth > 0)
+    L_out += at_least_one_bounce_radiance(r, isect);
   return L_out;
 }
 
