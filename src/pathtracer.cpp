@@ -705,6 +705,7 @@ Spectrum PathTracer::raytrace_pixel(size_t x, size_t y) {
 
     int n = 0;
     double s = 0, s2 = 0;
+    bool converged = false;
 
     for (int i = 0; i < num_samples / samplesPerBatch; i++) {
       for (int _ = 0; _ < samplesPerBatch; _++) {
@@ -724,11 +725,27 @@ Spectrum PathTracer::raytrace_pixel(size_t x, size_t y) {
       n += (int) samplesPerBatch;
       double mu = s / n;
       double var = (s2 - s * s / n) / (n - 1);
-      double convergence = 1.96 * sqrt(var / n);
-      if (convergence <= maxTolerance * mu) {
+      double confidenceRange = 1.96 * sqrt(var / n);
+      if (confidenceRange <= maxTolerance * mu) {
         sampleCountBuffer[x + y * frameBuffer.w] = n;
+        converged = true;
         break;
       }
+    }
+
+    if (!converged) {
+      for (int i = 0; i < num_samples % samplesPerBatch; i++) {
+        Vector2D target = origin + gridSampler->get_sample();
+        target = Vector2D(target.x / sampleBuffer.w, target.y / sampleBuffer.h);
+
+        Ray r = camera->generate_ray(target.x, target.y);
+        r.depth = max_ray_depth;
+
+        Spectrum sample = est_radiance_global_illumination(r);
+
+        spectrum += sample;
+      }
+      n += num_samples % samplesPerBatch;
     }
 
     return spectrum / n;
