@@ -1,6 +1,6 @@
 Assignment 3: PathTracer
 ====================
-Fanyu Meng
+Author: Fanyu Meng
 
 ## Overview
 In this project, we implemented a crude path tracer that can render simple objects. By implementing the `Ray` class and `intersect` functions in some primitives, we allow the camera ray to trace a light path and return the result. Using that abstraction, we implemented direct and indirect illumination, allowing the camera to find the color of a pixel with one bounce or multiple bounces. 
@@ -26,25 +26,33 @@ The triangle intersection algorithm is basically a barycentric-coordinates test.
             <td align="middle">
                 <img src="images/p1_coil.png" width="70%"/>
                 <figcaption align="middle"><code>CBcoil.dae</code> with normal shading.</figcaption>
-                                                       </td></figcaption>
             </td>
         </tr>
         <tr>
             <td align="middle">
                 <img src="images/p1_bunny.png" width="70%"/>
                 <figcaption align="middle"><code>bunny.dae</code> with normal shading.</figcaption>
-                                                       </td></figcaption>
             </td>
             <td align="middle">
                 <img src="images/p1_dragon.png" width="70%"/>
                 <figcaption align="middle"><code>dragon.dae</code> with normal shading.</figcaption>
-                                                       </td></figcaption>
             </td>
         </tr>
     </table>
 </div>
 
 ## Part 2: Bounding Volume Hierarchy
+
+We construct the bounding volume hierarchy (BVH) by recursively splitting the primitive list into two children. If the number of primitives is larger than `max_leaf_size`, we split the primitives using the heuristic of median, since it tries to split the primitives into two part with same number of items in both children. Then we recursively call the construction function on the two splitted list. If the number is small enough, we create a leaf node with the list of primitives in the node. This gives us the hierarchical tree of primitives we want.
+
+If we want to do an intersection test on a BVH node, we first test if the ray intersects with the bounding box of the node. If not, we can safely assert that the ray does not intersect with any of the primitives in the node. If intersects, if the is a leaf node, we find the minimum intersection point w.r.t. each of the primitives in the node; otherwise, we find the minimum intersection w.r.t the two child nodes, if exists.
+
+|                | `maxplanck.dae`            | `CBlucy.dae`            |
+|:--------------:|:--------------------------:|:-----------------------:|
+| image          |![](images/p2_maxplanck.png)|:![](images/p2_lucy.png):|
+| BVH build time | 0.0633s                    | 0.2317s                 |
+| render time    | 0.0713s                    | 0.0588s                 |
+
 
 
 ## Part 3: Direct Illumination
