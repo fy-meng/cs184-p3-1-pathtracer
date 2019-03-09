@@ -67,37 +67,51 @@ The following table compares the runtime of the  naive primitive list and the VB
 <div align="middle">
     <table width="100%" align="middle">
         <tr>
+            <td> 
+                <code> Input scene file: ../dae/meshedit/cow.dae </code> 
+            </td>
+            <td> 
+                <code> Input scene file: ../dae/meshedit/cow.dae </code> 
+            </td>
+        </tr>
+        <tr>
             <td>
-<code>
-[PathTracer] Input scene file: ../dae/meshedit/cow.dae 
-<br>
-[PathTracer] Collecting primitives... Done! (0.0008 sec) 
-<br>
-[PathTracer] Building BVH from 5856 primitives... Done! (0.0001 sec) 
-<br>
-[PathTracer] Rendering... 100%! (74.3638s) 
-<br>
-[PathTracer] BVH traced 1872935 rays. 
-<br>
-[PathTracer] Averaged 742.070462 intersection tests per ray. 
-<br>
-</code>
+                <code> Collecting primitives... Done! (0.0008 sec)  </code>
             </td>
             <td>
-<code>
-[PathTracer] Input scene file: ../dae/meshedit/cow.dae 
-<br>
-[PathTracer] Collecting primitives... Done! (0.0016 sec) 
-<br>
-[PathTracer] Building BVH from 5856 primitives... Done! (0.0120 sec) 
-<br>
-[PathTracer] Rendering... 100%! (0.8139s) 
-<br>
-[PathTracer] BVH traced 1647410 rays. 
-<br>
-[PathTracer] Averaged 2.970438 intersection tests per ray. 
-<br>
-</code>
+                <code> Collecting primitives... Done! (0.0016 sec)  </code>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <code> Building BVH from 5856 primitives... Done! (0.0001 sec)  </code>
+            </td>
+            <td>
+                <code> Building BVH from 5856 primitives... Done! (0.0120 sec)  </code>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <code> Rendering... 100%! (74.3638s)  </code>
+            </td>
+            <td>
+                <code> Rendering... 100%! (0.8139s)  </code>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <code> BVH traced 1872935 rays.  </code>
+            </td>
+            <td>
+                <code> BVH traced 1647410 rays.  </code>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <code> Averaged 742.070462 intersection tests per ray.  </code>
+            </td>
+            <td>
+                <code> Averaged 2.970438 intersection tests per ray.  </code>
             </td>
         </tr>
     </table>
@@ -172,6 +186,31 @@ As we can see from the images above, both method converges to the true lighting 
 
 ## Part 4: Global Illumination
 
+The global illumination rendering algorithm is basically recursively apply direct illumination algorithm, and terminate appropriately. For each bounce, we apply a global illumination calculation with correct weighting, and sample a new incoming light ray from the hit point. Then we apply Russian Roulette termination, see if we should terminate or continue to propagate light, if so, we incorporate a new direct light using the new ray and recurse. The base case is that the zero bounce case, where we only consider the light directly comes from the source to the camera. We also have some termination recursion if depth exceed a certain level, and force the algorithm to do at least one bounce if the max depth is greater than 1.
+
+<div align="middle">
+    <img src="images/p4_dragon_sample_1024.png" width="70%"/>
+    <figcaption align="middle">
+        <code>dragon.dae</code> with 64 light rays and 1024 samples per pixel.
+    </figcaption>
+</div>
 
 ## Part 5: Adaptive Sampling
 
+In adaptive sampling, we consider the distribution of the illumination samples. If the variance is small enough or the number of samples is small enough, we conclude that the pixel is well-sampled and converged and thus terminate early. By keeping track of the sum and sum of squares of the illumination of the samples so far, we can compute if the size of the 95% confidence interval is below a certain threshold. If so, we can stop sampling on this pixel.
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p5_bunny.png" width="70%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_bunny_rate.png" width="70%"/>
+            </td>
+        </tr>
+    </table>
+    <figcaption align="middle">
+                        <code>CBbunny.dae</code> and its corresponding sample rate distribution. Rendered with 2048 samples per pixel, 1 sample per light and a max ray depth of 5.
+                    </figcaption>
+</div>
