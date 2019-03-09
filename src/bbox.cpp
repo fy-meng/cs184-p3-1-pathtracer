@@ -21,8 +21,7 @@ bool BBox::intersect(const Ray& r, double& t0, double& t1) const {
     t1 = std::min(t1, std::max(temp0, temp1));
   }
 
-  return t0 <= t1
-         && ((r.min_t <= t0 && t0 <= r.max_t) || (r.min_t <= t1 && t1 <= r.max_t));
+  return t0 <= t1 && std::max(t0, r.min_t) <= std::min(t1, r.max_t);
 }
 
 void BBox::draw(Color c, float alpha) const {
