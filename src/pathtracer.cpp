@@ -662,7 +662,7 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
   // to the surface at the intersection point.
   // REMOVE IT when you are ready to begin Part 3.
 
-  // return normal_shading(isect.n);
+   return normal_shading(isect.n);
 
   // (Part 3): Return the direct illumination.
 
