@@ -33,10 +33,10 @@ bool Sphere::intersect(const Ray& r) const {
 
   double t1, t2;
   if (test(r, t1, t2)) {
-    if (r.min_t < t1 && t1 < r.max_t) {
+    if (r.min_t <= t1 && t1 <= r.max_t) {
       r.max_t = t1;
       return true;
-    } else if (r.min_t < t2 && t2 < r.max_t) {
+    } else if (r.min_t <= t2 && t2 <= r.max_t) {
       r.max_t = t2;
       return true;
     } else
@@ -55,9 +55,9 @@ bool Sphere::intersect(const Ray& r, Intersection *i) const {
 
   double t1, t2;
   if (test(r, t1, t2)) {
-    if (r.min_t < t1 && t1 < r.max_t)
+    if (r.min_t <= t1 && t1 <= r.max_t)
       i->t = r.max_t = t1;
-    else if (r.min_t < t2 && t2 < r.max_t)
+    else if (r.min_t <= t2 && t2 <= r.max_t)
       i->t = r.max_t = t2;
     else
       return false;

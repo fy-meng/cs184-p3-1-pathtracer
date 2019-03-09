@@ -30,7 +30,7 @@ bool Triangle::intersect(const Ray& r) const {
   double coeff = dot(s1, e1);
   double t = dot(s2, e2) / coeff, b1 = dot(s1, s) / coeff, b2 = dot(s2, r.d) / coeff, b0 = 1 - b1 - b2;
 
-  if (r.min_t < t && t < r.max_t
+  if (r.min_t <= t && t <= r.max_t
       && 0 <= b0 && b0 <= 1 && 0 <= b1 && b1 <= 1 && 0 <= b2 && b2 <= 1) {
     r.max_t = t;
     return true;
@@ -53,7 +53,7 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
   double coeff = dot(s1, e1);
   double t = dot(s2, e2) / coeff, b1 = dot(s1, s) / coeff, b2 = dot(s2, r.d) / coeff, b0 = 1 - b1 - b2;
 
-  if (r.min_t < t && t < r.max_t
+  if (r.min_t <= t && t <= r.max_t
       && 0 <= b0 && b0 <= 1 && 0 <= b1 && b1 <= 1 && 0 <= b2 && b2 <= 1) {
     r.max_t = t;
 

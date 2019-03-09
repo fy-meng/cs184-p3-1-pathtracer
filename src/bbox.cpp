@@ -17,12 +17,12 @@ bool BBox::intersect(const Ray& r, double& t0, double& t1) const {
   t0 = -INF_D, t1 = INF_D;
   for (int i = 0; i < 3; i++) {
     double temp0 = (max[i] - r.o[i]) / r.d[i], temp1 = (min[i] - r.o[i]) / r.d[i];
-    t0 = fmax(t0, fmin(temp0, temp1));
-    t1 = fmin(t1, fmax(temp0, temp1));
+    t0 = std::max(t0, std::min(temp0, temp1));
+    t1 = std::min(t1, std::max(temp0, temp1));
   }
 
   return t0 <= t1
-         && ((r.min_t < t0 && t0 < r.max_t) || (r.min_t < t1 && t1 < r.max_t));
+         && ((r.min_t <= t0 && t0 <= r.max_t) || (r.min_t <= t1 && t1 <= r.max_t));
 }
 
 void BBox::draw(Color c, float alpha) const {
