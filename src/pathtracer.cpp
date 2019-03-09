@@ -662,16 +662,16 @@ Spectrum PathTracer::est_radiance_global_illumination(const Ray &r) {
   // to the surface at the intersection point.
   // REMOVE IT when you are ready to begin Part 3.
 
-  //  return normal_shading(isect.n);
+//  return normal_shading(isect.n);
 
   // (Part 3): Return the direct illumination.
 
-  L_out = zero_bounce_radiance(r, isect);
-  // else if (max_ray_depth == 1)
-  //   return zero_bounce_radiance(r, isect) + one_bounce_radiance(r, isect);
+//  return one_bounce_radiance(r, isect);
 
   // (Part 4): Accumulate the "direct" and "indirect"
   // parts of global illumination into L_out rather than just direct
+
+  L_out = zero_bounce_radiance(r, isect);
   if (max_ray_depth > 0)
     L_out += at_least_one_bounce_radiance(r, isect);
   return L_out;
