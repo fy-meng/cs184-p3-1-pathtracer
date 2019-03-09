@@ -47,13 +47,20 @@ We construct the bounding volume hierarchy (BVH) by recursively splitting the pr
 
 If we want to do an intersection test on a BVH node, we first test if the ray intersects with the bounding box of the node. If not, we can safely assert that the ray does not intersect with any of the primitives in the node. If intersects, if the is a leaf node, we find the minimum intersection point w.r.t. each of the primitives in the node; otherwise, we find the minimum intersection w.r.t the two child nodes, if exists.
 
-|                | `maxplanck.dae`            | `CBlucy.dae`            |
-|:--------------:|:--------------------------:|:-----------------------:|
-| image          |![](images/p2_maxplanck.png)|:![](images/p2_lucy.png):|
-| BVH build time | 0.0633s                    | 0.2317s                 |
-| render time    | 0.0713s                    | 0.0588s                 |
-
-
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p2_maxplanck.png" width="70%"/>
+                <figcaption align="middle"><code>maxplanck.dae</code>, 0.0633s BVH build time, 0.0713s rendering time.</figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p2_lucy.png" width="70%"/>
+                <figcaption align="middle"><code>CBlucy.dae</code>, 0.2317s BVH build time, 0.0588s rendering time.</figcaption>
+            </td>
+        </tr>
+    </table>
+</div>
 
 ## Part 3: Direct Illumination
 
