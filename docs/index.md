@@ -195,6 +195,132 @@ The global illumination rendering algorithm is basically recursively apply direc
     </figcaption>
 </div>
 
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p4_bunny_global_depth_0.png" width="100%"/>
+                <figcaption align="middle"> 
+                    Max depth of 0.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_global_depth_1.png" width="100%"/>
+                <figcaption align="middle"> 
+                    Max depth of 1.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_global_depth_2.png" width="100%"/>
+                <figcaption align="middle"> 
+                    Max depth of 2.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_global_depth_3.png" width="100%"/>
+                <figcaption align="middle"> 
+                    Max depth of 3.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_global_depth_100.png" width="100%"/>
+                <figcaption align="middle"> 
+                    Max depth of 100.
+                </figcaption>
+            </td>
+        </tr>
+        <tr>
+            <td align="middle">
+                <img src="images/p4_bunny_indirect_depth_0.png" width="100%"/>
+                <figcaption align="middle"> 
+                    At depth 0.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_indirect_depth_1.png" width="100%"/>
+                <figcaption align="middle"> 
+                    At depth 1.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_indirect_depth_2.png" width="100%"/>
+                <figcaption align="middle"> 
+                    At depth 2.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_indirect_depth_3.png" width="100%"/>
+                <figcaption align="middle"> 
+                    At depth 3.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_bunny_indirect_depth_100.png" width="100%"/>
+                <figcaption align="middle"> 
+                    From depth 4 to 100.
+                </figcaption>
+            </td>
+        </tr>
+    </table>
+</div>
+
+The top row shows the global illumination `CBbunny.dae` with 1024 samples per pixel and different `max_ray_depth`, and the lower row only shows the indirect illumination at each depth. Note that:
+- at depth 0, we can only see the light since 0 bounce only consider light directly from the light sources; 
+- at depth 1, we cannot see the ceiling since the ceiling is behind the light source, it requires at least 2 bounces for a light ray to hit it; 
+- as max depth increases, we can gradually see the red or blue diffuse light reflected from the side planes onto the gray ground and back planes and the bunny; 
+- if we increase max depth to 100, the increase of lighting is negligible since most rays cannot reach a higher depth due to Russian Roulette termination.
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_1.png" width="100%"/>
+                <figcaption align="middle"> 
+                    1 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_2.png" width="100%"/>
+                <figcaption align="middle"> 
+                    2 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_4.png" width="100%"/>
+                <figcaption align="middle"> 
+                    4 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_8.png" width="100%"/>
+                <figcaption align="middle"> 
+                    8 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_16.png" width="100%"/>
+                <figcaption align="middle"> 
+                    16 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_64.png" width="100%"/>
+                <figcaption align="middle"> 
+                    64 sample per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_1024.png" width="100%"/>
+                <figcaption align="middle"> 
+                    1024 sample per pixel.
+                </figcaption>
+            </td>
+        </tr>
+    </table>
+</div>
+
+Note that with fewer samples per pixel, it is more likely for a pixel to deviate far from the expected lighting, and there are huge differences between neighbor pixels; but as the sample rate increases, the result converges to the expected output.
+
 ## Part 5: Adaptive Sampling
 
 In adaptive sampling, we consider the distribution of the illumination samples. If the variance is small enough or the number of samples is small enough, we conclude that the pixel is well-sampled and converged and thus terminate early. By keeping track of the sum and sum of squares of the illumination of the samples so far, we can compute if the size of the 95% confidence interval is below a certain threshold. If so, we can stop sampling on this pixel.
