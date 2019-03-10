@@ -695,9 +695,10 @@ Spectrum PathTracer::raytrace_pixel(size_t x, size_t y) {
 
   if (num_samples == 1) {
     Vector2D target = Vector2D(x + 0.5, y + 0.5);
-
     target = Vector2D(target.x / sampleBuffer.w, target.y / sampleBuffer.h);
+
     Ray r = camera->generate_ray(target.x , target.y);
+    r.depth = max_ray_depth;
 
     return est_radiance_global_illumination(r);
   } else {
