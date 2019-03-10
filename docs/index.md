@@ -189,11 +189,13 @@ As we can see from the images above, both method converges to the true lighting 
 The global illumination rendering algorithm is basically recursively apply direct illumination algorithm, and terminate appropriately. For each bounce, we apply a global illumination calculation with correct weighting, and sample a new incoming light ray from the hit point. Then we apply Russian Roulette termination, see if we should terminate or continue to propagate light, if so, we incorporate a new direct light using the new ray and recurse. The base case is that the zero bounce case, where we only consider the light directly comes from the source to the camera. We also have some termination recursion if depth exceed a certain level, and force the algorithm to do at least one bounce if the max depth is greater than 1.
 
 <div align="middle">
-    <img src="images/p4_dragon_sample_1024.png" width="70%"/>
+    <img src="images/p4_dragon_sample_1024.png" width="50%"/>
     <figcaption align="middle">
         <code>dragon.dae</code> with 64 light rays and 1024 samples per pixel.
     </figcaption>
 </div>
+
+<br>
 
 <div align="middle">
     <table width="100%" align="middle">
