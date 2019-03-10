@@ -276,43 +276,51 @@ The top row shows the global illumination `CBbunny.dae` with 1024 samples per pi
             <td align="middle">
                 <img src="images/p4_spheres_sample_1.png" width="100%"/>
                 <figcaption align="middle"> 
-                    1 sample per pixel.
+                    1 samples per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p4_spheres_sample_2.png" width="100%"/>
                 <figcaption align="middle"> 
-                    2 sample per pixel.
+                    2 samples per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p4_spheres_sample_4.png" width="100%"/>
                 <figcaption align="middle"> 
-                    4 sample per pixel.
+                    4 samples per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p4_spheres_sample_8.png" width="100%"/>
                 <figcaption align="middle"> 
-                    8 sample per pixel.
+                    8 samples per pixel.
                 </figcaption>
             </td>
+        <tr>
+        </tr>
             <td align="middle">
                 <img src="images/p4_spheres_sample_16.png" width="100%"/>
                 <figcaption align="middle"> 
-                    16 sample per pixel.
+                    16 samples per pixel.
+                </figcaption>
+            </td>
+            <td align="middle">
+                <img src="images/p4_spheres_sample_32.png" width="100%"/>
+                <figcaption align="middle"> 
+                    32 samples per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p4_spheres_sample_64.png" width="100%"/>
                 <figcaption align="middle"> 
-                    64 sample per pixel.
+                    64 samples per pixel.
                 </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p4_spheres_sample_1024.png" width="100%"/>
                 <figcaption align="middle"> 
-                    1024 sample per pixel.
+                    1024 samples per pixel.
                 </figcaption>
             </td>
         </tr>
